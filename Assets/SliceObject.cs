@@ -56,6 +56,5 @@ public class SliceObject : MonoBehaviour
         collider.convex = true;
         sliceObject.layer = LayerMask.NameToLayer("Sliceble");
         
-        
     }
 }

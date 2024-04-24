@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using EzySlice;
+using System;
 
 public enum WeaponType
 {
@@ -28,21 +27,46 @@ public class BaseWeapon : MonoBehaviour
 
     [HideInInspector] public bool _holding;
     LayerMask _holdingLayer;
-    public Transform _blade;
 
-    private void Start()
+
+    [Header("")]
+    public SliceClass _slice = new SliceClass();
+
+    [Serializable]
+    public class SliceClass
     {
-        _blade = GetComponentInChildren<MeshCollider>().transform;
+        public Material _inside;
+        public Transform startSlicePoint;
+        public Transform endSlicePoint;
+        public VelocityEstimator velocityEstimator;
+        public LayerMask sliceableLayer;
+        public float cutForce = 50f;
     }
 
-    public void Holding(LayerMask _layer)
+    public void Holding()
     {
-        _holdingLayer = _layer;
+        //_holdingLayer = _hoverLayer;
+        Debug.LogWarning("Pickup");
+
+        GetComponent<Collider>().excludeLayers = _holdingLayer;
     }
 
     public void drop()
     {
+        Debug.LogWarning("Drop");
+
+        GetComponent<Collider>().excludeLayers -= _holdingLayer;
         _holdingLayer = ~0;
+    }
+
+    void FixedUpdate()
+    {
+        bool hadHit = Physics.Linecast(_slice.startSlicePoint.position, _slice.endSlicePoint.position, out RaycastHit hit, _slice.sliceableLayer);
+        if (hadHit)
+        {
+            GameObject target = hit.transform.gameObject;
+            Slice(target);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -60,31 +84,33 @@ public class BaseWeapon : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    void Slice(GameObject target)
     {
-        slide(other.gameObject);
-    }
+        Vector3 velocity = _slice.velocityEstimator.GetVelocityEstimate();
+        Vector3 planeNormal = Vector3.Cross(_slice.endSlicePoint.position - _slice.startSlicePoint.position, velocity);
+        planeNormal.Normalize();
 
-    void slide(GameObject target)
-    {
-        SlicedHull slice = target.Slice(_blade.position, _blade.up);
+        SlicedHull slice = target.Slice(_slice.endSlicePoint.position, planeNormal);
 
         if(slice != null)
         {
-            GameObject upperHull = slice.CreateUpperHull(target);
-            GameObject lowerHull = slice.CreateLowerHull(target);
+            GameObject upperHull = slice.CreateUpperHull(target, _slice._inside);
+            SetSlice(upperHull);
+            GameObject lowerHull = slice.CreateLowerHull(target, _slice._inside);
+            SetSlice(lowerHull);
 
             Destroy(target);
-
-            upperHull.AddComponent<Rigidbody>();
-            upperHull.AddComponent<MeshCollider>().convex = true;
-            upperHull.layer = 8;
-            upperHull.AddComponent<MeshFilter>();
-
-            lowerHull.AddComponent<Rigidbody>();
-            lowerHull.AddComponent<MeshCollider>().convex = true;
-            lowerHull.layer = 8;
-            lowerHull.AddComponent<MeshFilter>();
         }
+    }
+
+    void SetSlice(GameObject Hull)
+    {
+        Hull.AddComponent<Rigidbody>();
+        Hull.AddComponent<MeshCollider>().convex = true;
+        Hull.AddComponent<MeshFilter>();
+        UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = Hull.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
+
+        _interactlow.interactionLayers = 3;
+        _interactlow.useDynamicAttach = true;
     }
 }
