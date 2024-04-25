@@ -8,6 +8,9 @@ TagManager:
   - Damage Area
   - Enemy
   - Sword
+  - WoodTexture
+  - MetalTexture
+  - EnemyTexture
   layers:
   - Default
   - TransparentFX

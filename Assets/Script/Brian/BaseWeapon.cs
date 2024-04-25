@@ -18,7 +18,8 @@ public class BaseWeapon : MonoBehaviour
     public WeaponType _type;
 
     [Header("Weapon stats")]
-    public float _damage;
+    public float _damage; 
+    public float _sharpnes;
     public float _weight;
 
     [Header("Weapon Extra")]
@@ -35,12 +36,21 @@ public class BaseWeapon : MonoBehaviour
     [Serializable]
     public class SliceClass
     {
-        public Material _inside;
+        [HideInInspector] public Material _inside;
+        public SlideMaterials _sliceMaterials = new SlideMaterials();
         public Transform startSlicePoint;
         public Transform endSlicePoint;
         public VelocityEstimator velocityEstimator;
         public LayerMask sliceableLayer;
         public float cutForce = 50f;
+
+        [Serializable]
+        public class SlideMaterials
+        {
+            public Material _wood;
+            public Material _metal;
+            public Material _enemy;
+        }
     }
 
     public void Holding()
@@ -59,13 +69,13 @@ public class BaseWeapon : MonoBehaviour
         _holdingLayer = ~0;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         bool hadHit = Physics.Linecast(_slice.startSlicePoint.position, _slice.endSlicePoint.position, out RaycastHit hit, _slice.sliceableLayer);
-        if (hadHit)
+
+        if (hadHit && hit.collider != null)
         {
-            GameObject target = hit.transform.gameObject;
-            Slice(target);
+            Hit(hit.collider);
         }
     }
 
@@ -84,8 +94,49 @@ public class BaseWeapon : MonoBehaviour
         }
     }
 
+    private void Hit(Collider Hitcoll)
+    {
+        EnemyWeakpoints enemy = Hitcoll.GetComponent<EnemyWeakpoints>();
+
+        for (int i = 0; i < enemy._weakpoints.Length; i++)
+        {
+            if (Hitcoll == enemy._weakpoints[i])
+            {
+                enemy._weakpointsHealth[i] -= _sharpnes;
+
+                if (enemy._weakpointsHealth[i] <= 0)
+                {
+                    Slice(Hitcoll.gameObject);
+                }
+            }
+        }
+
+
+    }
+
+
     void Slice(GameObject target)
     {
+        if(target.tag == "WoodTexture")
+        {
+            _slice._inside = _slice._sliceMaterials._wood;
+        }
+
+        else if (target.tag == "MetalTexture")
+        {
+            _slice._inside = _slice._sliceMaterials._metal;
+        }
+
+        else if (target.tag == "EnemyTexture")
+        {
+            _slice._inside = _slice._sliceMaterials._enemy;
+        }
+
+        else
+        {
+            _slice._inside = _slice._sliceMaterials._metal;
+        }
+
         Vector3 velocity = _slice.velocityEstimator.GetVelocityEstimate();
         Vector3 planeNormal = Vector3.Cross(_slice.endSlicePoint.position - _slice.startSlicePoint.position, velocity);
         planeNormal.Normalize();
@@ -95,17 +146,19 @@ public class BaseWeapon : MonoBehaviour
         if(slice != null)
         {
             GameObject upperHull = slice.CreateUpperHull(target, _slice._inside);
-            SetSlice(upperHull);
+            SetSlice(upperHull, target);
             GameObject lowerHull = slice.CreateLowerHull(target, _slice._inside);
-            SetSlice(lowerHull);
+            SetSlice(lowerHull, target);
 
             Destroy(target);
         }
     }
 
-    void SetSlice(GameObject Hull)
+    void SetSlice(GameObject Hull, GameObject Parent)
     {
-        Hull.AddComponent<Rigidbody>();
+        Hull.tag = Parent.tag;
+
+        Hull.AddComponent<Rigidbody>().excludeLayers += 6;
         Hull.AddComponent<MeshCollider>().convex = true;
         Hull.AddComponent<MeshFilter>();
         UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = Hull.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
