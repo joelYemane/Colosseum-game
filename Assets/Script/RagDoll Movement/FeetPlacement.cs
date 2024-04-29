@@ -1,24 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class FeetPlacement : MonoBehaviour
 {
+    public TwoBoneIKConstraint iKConstraintL;
+    public TwoBoneIKConstraint iKConstraintR;
     public Transform footPositionL;
     public Transform footPositionR;
 
+    public Transform walkTowardsL;
+    public Transform walkTowardsR;
     
-    public Vector3 rayCastHitPositionR;
-    public Vector3 rayCastHitPositionL;
+    public Transform raycastPelvis;
+    
+    public GameObject leftPrefabToSpawn;
+    public GameObject rightPrefabToSpawn;
+    private GameObject currentPrefabToSpawn;    
+    public GameObject oldPrefab;
+    public float offSet;
 
-    public Transform raycastPositionL;
-    public Transform raycastPositionR;
+    
     private Vector3 direction;
     private Vector3 footPositionLV;
     private Vector3 footPositionRV;
     public float walkSpeed;
-    public float distanceBetweenStepL;
-    public float distanceBetweenStepR;
+    public float distanceFromPelvis;
+   
+   public bool stepPosnew = false;
     public float tresHoldStep;
     public bool leftFootStep;
     public bool rightFootStep;
@@ -34,78 +46,58 @@ public class FeetPlacement : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-         RaycastHit hitRayCastR;
-         RaycastHit hitRaycastL;
-        footPositionLV = new Vector3(raycastPositionL.transform.position.x, raycastPositionL.transform.position.y, raycastPositionL.transform.position.z);
-        footPositionRV = new Vector3(raycastPositionR.transform.position.x, raycastPositionR.transform.position.y, raycastPositionR.transform.position.z);
-        if (Physics.Raycast(raycastPositionL.position, direction, out hitRaycastL, Mathf.Infinity))
+       
+       
+        RaycastHit positionPelvis;
+        if(Physics.Raycast(raycastPelvis.position, direction, out positionPelvis , Mathf.Infinity,7))
         {
-            rayCastHitPositionL = hitRaycastL.point;
-        }
-        if (Physics.Raycast(raycastPositionR.position, direction, out hitRayCastR, Mathf.Infinity))
-        {
-            rayCastHitPositionR = hitRayCastR.point;
-        }
-        distanceBetweenStepL = Vector3.Distance(raycastPositionL.transform.position, footPositionL.position);
-        distanceBetweenStepR = Vector3.Distance(rayCastHitPositionR, footPositionR.position);
-        
-        RaycastHit hitR;
-        RaycastHit hitL;
-        if(distanceBetweenStepL > tresHoldStep || distanceBetweenStepR > tresHoldStep)
-        {
-            if(!leftFootStep && !rightFootStep)
+            distanceFromPelvis = Vector3.Distance( positionPelvis.point,footPositionL.position);
+            if(distanceFromPelvis >= tresHoldStep)
             {
-            
-                if(lastStep == "L")
+                if(!stepPosnew)
                 {
-                    rightFootStep = true;
-                    if(Physics.Raycast(footPositionRV, direction,out hitR,Mathf.Infinity))
-                    {   
-                    
-                        footPositionR.transform.position = hitR.point;
-
-                    }
-                    rightFootStep = false;
-                    lastStep ="R";
-                }
-                else if(lastStep == "R")
-                {
-                    leftFootStep = true;
-                    if(Physics.Raycast(footPositionLV, direction,out hitL,Mathf.Infinity))
-                    {   
-                    
-                        footPositionL.transform.position = hitL.point;
-                    
-                    }
-                    leftFootStep = false;
-                  
-                    lastStep = "L";
+                    StartCoroutine(InstantiateNextStep());
+                    stepPosnew = true;
                 }
                 
+                //Vector3.Lerp(footPositionL,)
             }
+        }
+    }
+
+
+        public IEnumerator  InstantiateNextStep()
+    {
+       
+        Vector3 forwardOffset = (lastStep == "R" ? footPositionR.forward : footPositionL.forward) * offSet;
+        Vector3 offSetV = oldPrefab.transform.position + forwardOffset;
+        currentPrefabToSpawn = lastStep == "R" ? rightPrefabToSpawn : leftPrefabToSpawn;
+        GameObject newSpawned = GameObject.Instantiate(currentPrefabToSpawn, offSetV, Quaternion.identity);
+        
+        TwoBoneIKConstraint currentConstraint = lastStep == "R" ? iKConstraintR:iKConstraintL;
+        
+        if(oldPrefab != null){
+            Destroy(oldPrefab);
 
         }
+        oldPrefab = newSpawned;
+
+        Vector3 currentTargetPos = currentConstraint.data.target.position;
+        float lerpTime = 1f;
+        float startTime = Time.time;
+
         
 
         
-    }
-                
+        while(Time.time - startTime < lerpTime)
+        {
+            float t = (Time.time-startTime)/lerpTime;
+            currentConstraint.data.target.position = Vector3.Lerp(currentTargetPos, newSpawned.transform.position, t);
+            yield return null;
 
-private void OnDrawGizmos()
-{
-    // Draw raycasts
-    Gizmos.color = Color.red;
-    Gizmos.DrawRay(raycastPositionL.position, direction);
-    Gizmos.DrawRay(raycastPositionR.position, direction);
-
-    // Draw foot positions
-    Gizmos.color = Color.green;
-    Gizmos.DrawSphere(footPositionL.position, 0.1f);
-    Gizmos.DrawSphere(footPositionR.position, 0.1f);
-}
-    public void Walk()
-    {
-        
-        leftFootStep = false;
+        }   
+        currentConstraint.data.target.position = newSpawned.transform.position;
+        lastStep = lastStep =="R" ? "L" : "R";
+        stepPosnew = false;
     }
 }
