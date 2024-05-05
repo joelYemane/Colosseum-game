@@ -10,6 +10,7 @@ public class FeetPlacement : MonoBehaviour
     public TwoBoneIKConstraint iKConstraintL;
     public TwoBoneIKConstraint iKConstraintR;
     public Transform footPositionL;
+    public LayerMask ground;
     public Transform footPositionR;
 
     public Transform walkTowardsL;
