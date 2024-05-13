@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4827104093928470877}
   - component: {fileID: 6710544122534075302}
-  - component: {fileID: 8746968499738418593}
   - component: {fileID: 588486935833011400}
   m_Layer: 8
   m_Name: TEstEnemy
@@ -70,28 +69,6 @@ MonoBehaviour:
   - {fileID: 4888239668174489558}
   head: {fileID: 7402873545960980580}
   speed: 125
---- !u!195 &8746968499738418593
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1633946542266497651}
-  m_Enabled: 0
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 2.85
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 2
-  m_AutoTraverseOffMeshLink: 0
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!114 &588486935833011400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c149f7e68fb334dbe387d0702925d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navMeshAgent: {fileID: 8746968499738418593}
+  navMeshAgent: {fileID: 0}
   player: {fileID: 0}
 --- !u!1001 &142729634820866816
 PrefabInstance:
