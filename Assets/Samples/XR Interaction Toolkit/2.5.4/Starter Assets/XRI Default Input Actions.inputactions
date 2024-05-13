@@ -443,6 +443,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "speed",
+                    "type": "PassThrough",
+                    "id": "1cc7dff5-730d-4a4e-b343-da260195984e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -674,6 +683,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "Grip Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7bc7dd8b-9670-4dc4-bd82-1dc6da6d45f6",
+                    "path": "<OculusTouchController>{LeftHand}/devicePose/velocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "speed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -1133,6 +1153,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "speed",
+                    "type": "PassThrough",
+                    "id": "bd598c89-4507-4d21-9c77-073fbb67570e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Rotation",
                     "type": "Value",
                     "id": "ee6bf5bf-bb0a-4a50-8327-cb654b19e298",
@@ -1470,6 +1499,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "Grip Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6bbf710f-9418-447d-aa3b-4fe8badb9cea",
+                    "path": "<HandInteractionPoses>{RightHand}/devicePose/velocity",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "speed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

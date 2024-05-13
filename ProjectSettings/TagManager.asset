@@ -11,6 +11,9 @@ TagManager:
   - WoodTexture
   - MetalTexture
   - EnemyTexture
+  - FxTemporaire
+  - Right
+  - Left
   layers:
   - Default
   - TransparentFX
@@ -25,7 +28,7 @@ TagManager:
   - UpgradeEllement
   - Blade
   - Sliceble
-  - 
+  - Magic
   - 
   - 
   - 

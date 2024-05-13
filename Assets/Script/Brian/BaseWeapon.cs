@@ -96,6 +96,8 @@ public class BaseWeapon : MonoBehaviour
 
     private void Hit(Collider Hitcoll)
     {
+        if (!Hitcoll.GetComponent<EnemyWeakpoints>()) return;
+
         EnemyWeakpoints enemy = Hitcoll.GetComponent<EnemyWeakpoints>();
 
         for (int i = 0; i < enemy._weakpoints.Length; i++)
@@ -161,6 +163,7 @@ public class BaseWeapon : MonoBehaviour
         Hull.AddComponent<Rigidbody>().excludeLayers += 6;
         Hull.AddComponent<MeshCollider>().convex = true;
         Hull.AddComponent<MeshFilter>();
+        Hull.layer = 31;
         UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = Hull.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
 
         _interactlow.interactionLayers = 3;
