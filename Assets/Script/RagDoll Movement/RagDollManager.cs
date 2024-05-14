@@ -7,15 +7,21 @@ public class RagDollManager : MonoBehaviour
 {   
     public ConfigurableJoint [] joint; 
     public GameObject [] bones;
-    public GameObject head;
+    public GameObject head, spine, groundPos;
     private Vector3 direction;
     public Rigidbody[] allBodys; 
     private Rigidbody rb;
     public float speed;
-    public float treshold;
+    public float tresholdCenter;
+    public float tresholdFellOver;
     public float distanceBody;
+
+    public Transform rayCastFeetPosR, rayCastFeetPosL;
+    public bool isGrounded;
     public Vector3 centerOfMass;
+    public LayerMask ground;
     public Vector3 originalSPot;
+    public float getUpAmount;
 
     // Start is called before the first frame update
     void Start()
@@ -36,37 +42,68 @@ public class RagDollManager : MonoBehaviour
     void FixedUpdate()
     {   
         Vector3 headPos = new Vector3(head.transform.position.x,head.transform.position.y,head.transform.position.z);
+       
+       
         distanceBody = Vector3.Distance(headPos, centerOfMass);
-        //rb.AddForce(direction*speed);
-        for (int i = 0; i < joint.Length; i++)
+        
+        if(headPos.y < tresholdFellOver)
         {
-            Vector3 positionToGoTo = bones[i].transform.position;
-            Quaternion rotationToGoTo = bones[i].transform.localRotation.normalized;
-            
-            joint[i].targetPosition = positionToGoTo;
-            joint[i].targetRotation = rotationToGoTo;
-
+            isGrounded = false;
         }
+        else
+        {
+            isGrounded= true;
+        }
+        
+        if(isGrounded)
+        {
+            for (int i = 0; i < joint.Length; i++)
+            {
+                Vector3 positionToGoTo = -bones[i].transform.position;
+                Quaternion rotationToGoTo = bones[i].transform.localRotation.normalized;
+
+                joint[i].targetPosition = positionToGoTo;
+                joint[i].targetRotation = rotationToGoTo;
+
+            }
+        }
+        
         for (int i = 0; i < allBodys.Length; i++)
         {
            centerOfMass = allBodys[i].centerOfMass;
-            
+           
         }
-        if(distanceBody > treshold)
+        if(distanceBody > tresholdCenter)
         {
             Vector3 desiredSpot = DesiredCenterOfMass();
             Vector3 nowSpot = CurrentCenterOfMass();
             Vector3 forceDirection = (nowSpot - desiredSpot).normalized;
-            head.GetComponent<Rigidbody>().AddForce(forceDirection* speed);
+            head.GetComponent<Rigidbody>().AddForce(-forceDirection* speed);
         }
        
     }
     private Vector3 CurrentCenterOfMass()
     {
+        for(int i = 0;i <allBodys.Length; i++)
+        {
+            centerOfMass = allBodys[i].centerOfMass;
+            centerOfMass /= allBodys.Length;
+        }
         return centerOfMass;
     }
     private Vector3 DesiredCenterOfMass()
     {
         return originalSPot ;
     }
+    //public void GetUpSleepy()
+    //{
+
+    //    for (int i = 0; i < joint.Length; i++)
+    //    {
+    //        getUpAmount = joint[i].angularXDrive.positionSpring;
+    //        getUpAmount = joint[i].angularYZDrive.positionSpring;
+    //        Debug.Log(joint[i].angularYZDrive);
+
+    //    }
+    //}
 }
