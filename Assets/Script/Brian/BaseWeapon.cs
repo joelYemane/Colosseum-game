@@ -33,11 +33,14 @@ public class BaseWeapon : MonoBehaviour
     [Header("")]
     public SliceClass _slice = new SliceClass();
 
+    [HideInInspector] public Vector3 _hitloc;
+
     [Serializable]
     public class SliceClass
     {
         [HideInInspector] public Material _inside;
         public SlideMaterials _sliceMaterials = new SlideMaterials();
+        public HitEffect _hitEffect = new HitEffect();
         public Transform startSlicePoint;
         public Transform endSlicePoint;
         public VelocityEstimator velocityEstimator;
@@ -50,6 +53,14 @@ public class BaseWeapon : MonoBehaviour
             public Material _wood;
             public Material _metal;
             public Material _enemy;
+        }
+
+        [Serializable]
+        public class HitEffect
+        {
+            public GameObject _wood;
+            public GameObject _metal;
+            public GameObject _enemy;
         }
     }
 
@@ -69,6 +80,24 @@ public class BaseWeapon : MonoBehaviour
         _holdingLayer = ~0;
     }
 
+    public void Hitcollider(GameObject target)
+    {
+        if (target.tag == "WoodTexture")
+        {
+            Instantiate(_slice._hitEffect._wood, _hitloc, transform.rotation);
+        }
+
+        else if (target.tag == "MetalTexture")
+        {
+            Instantiate(_slice._hitEffect._metal, _hitloc, transform.rotation);
+        }
+
+        else if (target.tag == "EnemyTexture")
+        {
+            Instantiate(_slice._hitEffect._enemy, _hitloc, transform.rotation);
+        }
+    }
+
     void Update()
     {
         bool hadHit = Physics.Linecast(_slice.startSlicePoint.position, _slice.endSlicePoint.position, out RaycastHit hit, _slice.sliceableLayer);
@@ -79,22 +108,7 @@ public class BaseWeapon : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.layer == _upgradeLayer)
-        {
-
-
-            return;
-        }
-
-        if(other.gameObject.layer != _holdingLayer)
-        {
-
-        }
-    }
-
-    private void Hit(Collider Hitcoll)
+    public void Hit(Collider Hitcoll)
     {
         if (!Hitcoll.GetComponent<EnemyWeakpoints>()) return;
 
@@ -112,8 +126,6 @@ public class BaseWeapon : MonoBehaviour
                 }
             }
         }
-
-
     }
 
 
