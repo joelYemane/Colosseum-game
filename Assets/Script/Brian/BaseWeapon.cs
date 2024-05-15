@@ -25,6 +25,8 @@ public class BaseWeapon : MonoBehaviour
     [Header("Weapon Extra")]
     public LayerMask _upgradeLayer;
 
+    public EllementStoneScripObject _upgrade;
+
 
     [HideInInspector] public bool _holding;
     LayerMask _holdingLayer;
@@ -96,6 +98,11 @@ public class BaseWeapon : MonoBehaviour
         {
             Instantiate(_slice._hitEffect._enemy, _hitloc, transform.rotation);
         }
+    }
+
+    public void EnemyHit(GameObject enemy)
+    {
+
     }
 
     void Update()
