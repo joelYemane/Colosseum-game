@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class FollowHead : MonoBehaviour
 {
-    public Transform headr;
+    public float _timer, _rotationSpeed;
+    public Transform _target;
 
-  
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        transform.position = headr.position;
+        LookAt();
+    }
+    void LookAt()
+    {
+        _timer += Time.deltaTime;
+
+        Vector3 direction = (_target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * _rotationSpeed);
     }
 }
