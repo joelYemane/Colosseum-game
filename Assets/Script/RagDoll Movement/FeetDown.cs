@@ -4,19 +4,27 @@ using UnityEngine;
 
 public class FeetDown : MonoBehaviour
 {
-    public float speed;
-    public GameObject mainObject,newHeight;
-    public Vector3 direction;
+    
+    public GameObject feetL,feetR;
+    private Rigidbody feetLRB,feetRRB;
+    public float power;
     // Start is called before the first frame update
     void Start()
     {
-        
+        feetLRB= feetL.GetComponent<Rigidbody>();
+        feetRRB= feetR.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        mainObject.transform.position = Vector3.MoveTowards(mainObject.transform.position, newHeight.transform.position, speed);
-        newHeight.transform.position = mainObject.transform.position;
+        ApplyForceDown(feetL,power);
+        ApplyForceDown(feetR,power);
+    }
+    void ApplyForceDown(GameObject feet, float power)
+    {
+        Rigidbody feetRB = feet.GetComponent<Rigidbody>();
+        feetRB.AddForce(Vector3.down *  power);
+
     }
 }

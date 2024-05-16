@@ -8,7 +8,7 @@ public class RagDoll : MonoBehaviour
 {
     public Rigidbody[] rigidbodies;
     public float moveForce = 10f;
-    public Transform targetPosition;
+    //public Transform targetPosition;
     public Transform centerOfMass;
     public float stabilityForce;
     public Transform leftHandTarget;
@@ -20,7 +20,7 @@ public class RagDoll : MonoBehaviour
     public TwoBoneIKConstraint leftFootIK;
     public TwoBoneIKConstraint rightFootIK;
     private Rigidbody centralRigidbody;
-
+    public Transform RagdollPos;
     private Vector3 integral;
     private Vector3 lastError;
     // Start is called before the first frame update
@@ -70,6 +70,7 @@ public class RagDoll : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        RagdollPos.transform.position = transform.position;
         leftHandTarget.position = CalculateLeftHandPos();
         rightHandTarget.position = CalculateRightHandPos();
         leftFootTarget.position = CalculateLeftFootPos();
@@ -85,32 +86,32 @@ public class RagDoll : MonoBehaviour
     {
         if(GroundCheck())
         {
-            Vector3 forceDirection = (targetPosition.position - centralRigidbody.position).normalized;
-            Vector3 stabilizeDirection = (centerOfMass.position - transform.position).normalized;
-            Vector3 error = targetPosition.position - centralRigidbody.position;
-            integral += error * Time.fixedDeltaTime;
-            Vector3 derivative = (error - lastError) / Time.fixedDeltaTime;
-            lastError = error;
+            //Vector3 forceDirection = (targetPosition.position - centralRigidbody.position).normalized;
+            //Vector3 stabilizeDirection = (centerOfMass.position - transform.position).normalized;
+            //Vector3 error = targetPosition.position - centralRigidbody.position;
+            //integral += error * Time.fixedDeltaTime;
+            //Vector3 derivative = (error - lastError) / Time.fixedDeltaTime;
+            //lastError = error;
 
-            Vector3 pidForce = moveForce * error +  stabilityForce * integral + 30 * derivative;
+            //Vector3 pidForce = moveForce * error +  stabilityForce * integral + 30 * derivative;
 
-            centralRigidbody.AddForce(pidForce * Time.fixedDeltaTime);
+            //centralRigidbody.AddForce(pidForce * Time.fixedDeltaTime);
 
         }
 
     }
     private void OnDrawGizmos()
     {
-        foreach (Rigidbody rb in rigidbodies)
-        {
-            Gizmos.color = Color.red;
-            Vector3 forceDirection = (targetPosition.position - rb.position).normalized;
-            Gizmos.DrawLine(rb.position, rb.position + forceDirection * moveForce * 0.1f);
+        //foreach (Rigidbody rb in rigidbodies)
+        //{
+        //    Gizmos.color = Color.red;
+        //    Vector3 forceDirection = (targetPosition.position - rb.position).normalized;
+        //    Gizmos.DrawLine(rb.position, rb.position + forceDirection * moveForce * 0.1f);
 
-            Gizmos.color = Color.blue;
-            Vector3 stabilityDirection = (centerOfMass.position - transform.position).normalized;
-            Gizmos.DrawLine(rb.position, rb.position - stabilityDirection * stabilityForce * 0.1f);
-        }
+        //    Gizmos.color = Color.blue;
+        //    Vector3 stabilityDirection = (centerOfMass.position - transform.position).normalized;
+        //    Gizmos.DrawLine(rb.position, rb.position - stabilityDirection * stabilityForce * 0.1f);
+        //}
     }
     private Vector3 CalculateLeftHandPos()
     {
