@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class FeetDown : MonoBehaviour
 {
-    
-    public GameObject feetL,feetR;
+
+    public GameObject feetL, feetR;
     private Rigidbody feetLRB,feetRRB;
     public float power;
+    public float powerUp;
     // Start is called before the first frame update
     void Start()
     {
+        
         feetLRB= feetL.GetComponent<Rigidbody>();
         feetRRB= feetR.GetComponent<Rigidbody>();
     }
@@ -20,6 +22,7 @@ public class FeetDown : MonoBehaviour
     {
         ApplyForceDown(feetL,power);
         ApplyForceDown(feetR,power);
+        
     }
     void ApplyForceDown(GameObject feet, float power)
     {
@@ -27,4 +30,5 @@ public class FeetDown : MonoBehaviour
         feetRB.AddForce(Vector3.down *  power);
 
     }
+    
 }

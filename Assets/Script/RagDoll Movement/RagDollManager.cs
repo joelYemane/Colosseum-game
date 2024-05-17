@@ -31,6 +31,7 @@ public class RagDollManager : MonoBehaviour
     private Vector3 startPosition, endPos;
     public bool hasFiredRayCast;
     public GameObject targetPlayer;
+    public float distanceForWalk;
     // Start is called before the first frame update
     void Start()
     {
@@ -48,7 +49,7 @@ public class RagDollManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {   
-        
+        distanceForWalk = Vector3.Distance(transform.position, targetPlayer.transform.position);
         
 
         Vector3 headPos = new Vector3(head.transform.position.x,head.transform.position.y,head.transform.position.z);
@@ -67,29 +68,32 @@ public class RagDollManager : MonoBehaviour
         {
             isGrounded= true;
         }
-        
-        if(isGrounded)
+        if(distanceForWalk >3)
         {
-              ForceForwards();
-              switch (index)
-              {
+            if (isGrounded)
+            {
+                // ForceForwards();
+                switch (index)
+                {
                     case 0:
                         StartCoroutine(MoveFoot(targetL, rayCastFeetPosL.transform.position));
 
 
-                    break;
+                        break;
                     case 1:
                         StartCoroutine(MoveFoot(targetR, rayCastFeetPosR.transform.position));
 
 
-                    break;
-                    
-              }
-           
-           
+                        break;
 
-            
+                }
+
+
+
+
+            }
         }
+       
 
         for (int i = 0; i < allBodys.Length; i++)
         {
@@ -118,7 +122,7 @@ public class RagDollManager : MonoBehaviour
     }
     private Vector3 DesiredCenterOfMass()
     {
-        return originalSPot ;
+        return originalSPot;
     }
     
     public IEnumerator MoveFoot( GameObject foot, Vector3 rayCastPos)
@@ -154,9 +158,5 @@ public class RagDollManager : MonoBehaviour
 
        
     }
-    public void ForceForwards()
-    {
-        //enemyMainObject.AddForce(Vector3.forward * forceSpeed *Time.deltaTime, ForceMode.VelocityChange);
-        enemyMainObject.velocity = new Vector3(0, 0, 1);
-    }
+    
 }
