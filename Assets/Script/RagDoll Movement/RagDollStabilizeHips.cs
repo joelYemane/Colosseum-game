@@ -5,7 +5,7 @@ using UnityEngine;
 public class RagDollStabilizeHips : MonoBehaviour
 {
     // Stabilizing
-    public Rigidbody body, upperBody;
+    public Rigidbody body, head;
     public Transform desiredPosition;
     public float porportionalGain;
     public float intergralGain;
@@ -13,7 +13,7 @@ public class RagDollStabilizeHips : MonoBehaviour
     private Vector3 previousError;
     private Vector3 intergral;
     public float strenght,streghtUp;
-
+    public GameObject mainObject;
     //Leg Placement
     public Rigidbody[] ragdollRigidbodies;
     public Transform leftFoot;
@@ -38,16 +38,16 @@ public class RagDollStabilizeHips : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-      
-
+        
+        
         // Stabilizing using PID formule TO make him always give a aforce back to its desired position.
         Vector3 currentError = desiredPosition.position - body.position;
         intergral += currentError * Time.fixedDeltaTime;
         Vector3 derivative = (currentError - previousError)/ Time.fixedDeltaTime;
         previousError = currentError;
         Vector3 force = (porportionalGain * currentError) + (intergralGain * intergral) + (devirativeGain * derivative);
-        body.AddForce(force* strenght);
-        upperBody.AddForce(force * streghtUp);
+        body.AddForce(force*strenght);
+        head.AddForce(Vector3.up * streghtUp);
     }
     private void LateUpdate()
     {
