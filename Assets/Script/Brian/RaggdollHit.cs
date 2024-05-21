@@ -61,10 +61,10 @@ public class RaggdollHit : MonoBehaviour
             _obj.transform.parent = null;
             _obj.GetComponent<Rigidbody>().excludeLayers += 3;
             _obj.GetComponent<Rigidbody>().excludeLayers += 6;
-
+            
             UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = _obj.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
             _interactlow.interactionLayers = 3;
-            _interactlow.useDynamicAttach = true;
+            //_interactlow.useDynamicAttach = true;
         }
 
         if (_weakPointsBool._armR && _weakPointsJoint._armR)
@@ -78,7 +78,7 @@ public class RaggdollHit : MonoBehaviour
 
             UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = _obj.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
             _interactlow.interactionLayers = 3;
-            _interactlow.useDynamicAttach = true;
+            //_interactlow.useDynamicAttach = true;
         }
 
         if (_weakPointsBool._leggL && _weakPointsJoint._leggL)
@@ -92,7 +92,7 @@ public class RaggdollHit : MonoBehaviour
 
             UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = _obj.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
             _interactlow.interactionLayers = 3;
-            _interactlow.useDynamicAttach = true;
+            //_interactlow.useDynamicAttach = true;
         }
 
         if (_weakPointsBool._leggR && _weakPointsJoint._leggR)
@@ -106,7 +106,7 @@ public class RaggdollHit : MonoBehaviour
 
             UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = _obj.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
             _interactlow.interactionLayers = 3;
-            _interactlow.useDynamicAttach = true;
+            //_interactlow.useDynamicAttach = true;
         }
     }
 }
