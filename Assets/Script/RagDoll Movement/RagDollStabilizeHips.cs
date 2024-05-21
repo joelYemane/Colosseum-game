@@ -5,15 +5,19 @@ using UnityEngine;
 public class RagDollStabilizeHips : MonoBehaviour
 {
     // Stabilizing
-    public Rigidbody body, head;
+    public Transform pointOfForceArmL, pointOfForceArmR;
+    public Rigidbody body, head,shoulderL,shoulderR;
     public Transform desiredPosition;
     public float porportionalGain;
     public float intergralGain;
     public float devirativeGain;
     private Vector3 previousError;
     private Vector3 intergral;
+    private Vector3 forcePos;
     public float strenght,streghtUp;
     public GameObject mainObject;
+    public Transform RayCastPosL;
+    public Transform RayCastPosR;
     //Leg Placement
     public Rigidbody[] ragdollRigidbodies;
     public Transform leftFoot;
@@ -28,6 +32,11 @@ public class RagDollStabilizeHips : MonoBehaviour
     public float stepTimer;
     public float stepDuration = 1;
 
+    
+
+    // Distance Check Player
+    public float distantPlayer;
+    public Transform player;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,18 +45,30 @@ public class RagDollStabilizeHips : MonoBehaviour
     }
 
     // Update is called once per frame
+
+    private void Update()
+    {
+        distantPlayer = Vector3.Distance(transform.position, player.position);
+
+    }
     void FixedUpdate()
     {
-        
-        
+
+
         // Stabilizing using PID formule TO make him always give a aforce back to its desired position.
         Vector3 currentError = desiredPosition.position - body.position;
-        intergral += currentError * Time.fixedDeltaTime;
-        Vector3 derivative = (currentError - previousError)/ Time.fixedDeltaTime;
+        intergral += currentError * Time.deltaTime;
+        Vector3 derivative = (currentError - previousError) / Time.deltaTime;
         previousError = currentError;
         Vector3 force = (porportionalGain * currentError) + (intergralGain * intergral) + (devirativeGain * derivative);
-        body.AddForce(force*strenght);
+        body.AddRelativeForce(force);
+        // pull head up so ragdoll does not need to find balance point always
         head.AddForce(Vector3.up * streghtUp);
+
+        shoulderL.AddForce(Vector3.up * streghtUp);
+        shoulderR.AddForce(Vector3.up * streghtUp);
+        
+        
     }
     private void LateUpdate()
     {
@@ -61,13 +82,13 @@ public class RagDollStabilizeHips : MonoBehaviour
         }
         if(movingFoot == Foot.Left)
         {
-            Vector3 leftFootGroundPos = GroundPos(leftFoot.position);
+            Vector3 leftFootGroundPos = GroundPos(RayCastPosL.position);
             Vector3 leftFootTarget = new Vector3(centerOfMass.x - 0.2f, leftFootGroundPos.y, centerOfMass.z);
             leftFootTargetIK.position = Vector3.Lerp(leftFootTargetIK.position, leftFootTarget, Time.deltaTime * lerpSpeed);
         }
         else
         {
-            Vector3 rightFoorGroundPos = GroundPos(rightFoot.position);
+            Vector3 rightFoorGroundPos = GroundPos(RayCastPosR.position);
             Vector3 rightFootTarget = new Vector3(centerOfMass.x + 0.2f, rightFoorGroundPos.y, centerOfMass.z);
             rightFootTargetIK.position = Vector3.Lerp(rightFootTargetIK.position, rightFootTarget, Time.deltaTime * lerpSpeed);
         }
