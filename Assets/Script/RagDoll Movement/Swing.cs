@@ -5,6 +5,8 @@ using UnityEngine;
 public class Swing : MonoBehaviour
 {
     public Transform slashPoint;
+    public Transform currentPont;
+    
 
 
 

@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class WalkTowardsEnemy : MonoBehaviour
 {
     public Transform player;
-    private Vector3 direction;
-    public Rigidbody enemy;
-    public float speed;
-    public float turnSpeed;
+    public NavMeshAgent agent;
+  
     
     // Start is called before the first frame update
     void Start()
@@ -19,9 +18,9 @@ public class WalkTowardsEnemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 direction = transform.position - player.position;
-        //transform.LookAt(direction);
-        enemy.AddForce(-direction*speed * Time.deltaTime);
+        agent.destination = player.position;
+        
+        
         
 
     }
