@@ -10,6 +10,9 @@ public class TutoriolColl : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        _voice.PlayAudio(_audio);
+        if(other.gameObject.layer == 6)
+        {
+            _voice.PlayAudio(_audio);
+        }
     }
 }
