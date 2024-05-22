@@ -5,8 +5,8 @@ using UnityEngine;
 public class RagDollStabilizeHips : MonoBehaviour
 {
     // Stabilizing
-    public Transform pointOfForceArmL, pointOfForceArmR;
-    public Rigidbody body, head,shoulderL,shoulderR;
+    public Transform pointOfForceArmL, pointOfForceArmR,slapPointR,slapPointL;
+    public Rigidbody body,spine, head,foreArmR,foreArmL;
     public Transform desiredPosition;
     public float porportionalGain;
     public float intergralGain;
@@ -26,18 +26,23 @@ public class RagDollStabilizeHips : MonoBehaviour
     public Transform rightFootTargetIK;
     public float lerpSpeed = 5;
     public LayerMask ground;
-
+    public Transform endPosSlamR;
+    //LegSwitch
     private enum Foot {Left,Right}
     private Foot movingFoot = Foot.Left;
     public float stepTimer;
     public float stepDuration = 1;
 
-    
+
 
     // Distance Check Player
+    public float treshHold;
     public float distantPlayer;
     public Transform player;
+    public float time;
+    public float slamStrenght;
     // Start is called before the first frame update
+
     void Start()
     {
        ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
@@ -48,8 +53,10 @@ public class RagDollStabilizeHips : MonoBehaviour
 
     private void Update()
     {
-        distantPlayer = Vector3.Distance(transform.position, player.position);
-
+       
+        leftFootTargetIK.rotation = transform.rotation;
+        rightFootTargetIK.rotation = transform.rotation;
+       
     }
     void FixedUpdate()
     {
@@ -63,10 +70,9 @@ public class RagDollStabilizeHips : MonoBehaviour
         Vector3 force = (porportionalGain * currentError) + (intergralGain * intergral) + (devirativeGain * derivative);
         body.AddRelativeForce(force);
         // pull head up so ragdoll does not need to find balance point always
-        head.AddForce(Vector3.up * streghtUp);
-
-        shoulderL.AddForce(Vector3.up * streghtUp);
-        shoulderR.AddForce(Vector3.up * streghtUp);
+        //head.AddForce(Vector3.up * streghtUp);
+        spine.AddForce(Vector3.up * streghtUp);
+       
         
         
     }
@@ -126,6 +132,8 @@ public class RagDollStabilizeHips : MonoBehaviour
         }
         return feetPos;
     }
+   
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
