@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 public class TutoriolVoice : MonoBehaviour
 {
     public AudioSource _skullAudio;
+    public Animator _animator;
 
     public Voice _voice = new Voice();
 
@@ -31,9 +32,12 @@ public class TutoriolVoice : MonoBehaviour
         PlayAudio(_voice._start);
     }
 
-    public void PlayAudio(AudioClip _clip)
+    public async void PlayAudio(AudioClip _clip)
     {
         _skullAudio.clip = _clip;
         _skullAudio.Play();
+        _animator.SetBool("Talking", true);
+        await Task.Delay((int)_clip.length * 1000);
+        _animator.SetBool("Talking", false);
     }
 }

@@ -125,11 +125,24 @@ public class BaseWeapon : MonoBehaviour
         {
             if (Hitcoll == enemy._weakpoints[i])
             {
-                enemy._weakpointsHealth[i] -= _sharpnes;
-
-                if (enemy._weakpointsHealth[i] <= 0)
+                if(enemy._elementWeakness == null)
                 {
-                    Slice(Hitcoll.gameObject);
+                    enemy._weakpointsHealth[i] -= _sharpnes;
+
+                    if (enemy._weakpointsHealth[i] <= 0)
+                    {
+                        Slice(Hitcoll.gameObject);
+                    }
+                }
+
+                if (enemy._elementWeakness == _upgrade)
+                {
+                    enemy._weakpointsHealth[i] -= _sharpnes;
+
+                    if (enemy._weakpointsHealth[i] <= 0)
+                    {
+                        Slice(Hitcoll.gameObject);
+                    }
                 }
             }
         }
@@ -182,10 +195,12 @@ public class BaseWeapon : MonoBehaviour
         Hull.AddComponent<Rigidbody>().excludeLayers += 6;
         Hull.AddComponent<MeshCollider>().convex = true;
         Hull.AddComponent<MeshFilter>();
+        Hull.AddComponent<Destroy>()._destroyDelay = 15;
         Hull.layer = 31;
         UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable _interactlow = Hull.AddComponent<UnityEngine.XR.Interaction.Toolkit.XRGrabInteractable>();
 
         _interactlow.interactionLayers = 3;
         _interactlow.useDynamicAttach = true;
+
     }
 }
