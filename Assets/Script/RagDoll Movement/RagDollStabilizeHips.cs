@@ -75,7 +75,7 @@ public class RagDollStabilizeHips : MonoBehaviour
         Vector3 derivative = (currentError - previousError) / Time.fixedDeltaTime;
         previousError = currentError;
         Vector3 force = (porportionalGain * currentError) + (intergralGain * intergral) + (devirativeGain * derivative);
-        body.AddRelativeForce(force);
+        body.AddForce(force);
         // pull head up so ragdoll does not need to find balance point always
         //head.AddForce(Vector3.up * streghtUp);
         //spine.AddForce(Vector3.up * streghtUp);
