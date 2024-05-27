@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class RagDollStabilizeHips : MonoBehaviour
@@ -37,10 +38,11 @@ public class RagDollStabilizeHips : MonoBehaviour
 
     // Distance Check Player
     public float treshHold;
+    public GameObject target;
     public float distantPlayer;
     public Transform player;
     public float time;
-    public float slamStrenght;
+    public float speed;
     // Start is called before the first frame update
 
     void Start()
@@ -60,18 +62,23 @@ public class RagDollStabilizeHips : MonoBehaviour
     }
     void FixedUpdate()
     {
+        Vector3 TargetDelta = target.transform.position - transform.position;
+        float angle = Vector3.Angle(transform.forward, TargetDelta);
+        Vector3 turnAxis = Vector3.Cross(transform.forward, TargetDelta);
+        //transform.RotateAround(transform.position, turnAxis, Time.deltaTime * speed * angle);
 
+        //Look At
 
         // Stabilizing using PID formule TO make him always give a aforce back to its desired position.
         Vector3 currentError = desiredPosition.position - body.position;
-        intergral += currentError * Time.deltaTime;
-        Vector3 derivative = (currentError - previousError) / Time.deltaTime;
+        intergral += currentError * Time.fixedDeltaTime;
+        Vector3 derivative = (currentError - previousError) / Time.fixedDeltaTime;
         previousError = currentError;
         Vector3 force = (porportionalGain * currentError) + (intergralGain * intergral) + (devirativeGain * derivative);
         body.AddRelativeForce(force);
         // pull head up so ragdoll does not need to find balance point always
         //head.AddForce(Vector3.up * streghtUp);
-        spine.AddForce(Vector3.up * streghtUp);
+        //spine.AddForce(Vector3.up * streghtUp);
        
         
         
