@@ -20,7 +20,9 @@ public class FeetPlacement : MonoBehaviour
     public LayerMask ground;
     public Transform raycastL;
     public Transform raycastR;
- 
+
+    
+
     //LegSwitch
     private enum Foot { Left, Right }
     private Foot movingFoot = Foot.Left;
@@ -37,18 +39,18 @@ public class FeetPlacement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //transform.LookAt(player);
-        
-       
+        transform.LookAt(player);
+        MoveTowardsPlayer();
+
     }
     public void FixedUpdate()
     {
-       
+        
     }
 
     private void LateUpdate()
     {
-        MoveTowardsPlayer();
+        
         stepTimer -= Time.deltaTime;
         //Vector3 centerOfMass = CenterOfMass(ragdollRigidbodies);
         if (stepTimer <= 0)
@@ -61,13 +63,13 @@ public class FeetPlacement : MonoBehaviour
         {
             Vector3 leftFootGroundPos = GroundPos(raycastL.position);
             Vector3 leftFootTarget = new Vector3(leftFootGroundPos.x + 0.4f, leftFootGroundPos.y, leftFootGroundPos.z);
-            leftFootTargetIK.position = Vector3.Lerp(leftFootTargetIK.position, leftFootTarget, Time.deltaTime * lerpSpeed);
+            leftFootTargetIK.localPosition = Vector3.Lerp(leftFootTargetIK.position, leftFootTarget, Time.deltaTime * lerpSpeed);
         }
         else
         {
             Vector3 rightFoorGroundPos = GroundPos(raycastR.position);
             Vector3 rightFootTarget = new Vector3(rightFoorGroundPos.x - 0.4f, rightFoorGroundPos.y, rightFoorGroundPos.z);
-            rightFootTargetIK.position = Vector3.Lerp(rightFootTargetIK.position, rightFootTarget, Time.deltaTime * lerpSpeed);
+            rightFootTargetIK.localPosition = Vector3.Lerp(rightFootTargetIK.position, rightFootTarget, Time.deltaTime * lerpSpeed);
         }
 
 
@@ -84,13 +86,15 @@ public class FeetPlacement : MonoBehaviour
                 rb.AddForce(direction* multiplier);
             }
         }
-        else
+        
+        if(distance<=stoppingDistance)
         {
             foreach (Rigidbody rb in ragdollRigidbodies)
             {
                 rb.velocity = Vector3.zero;
             }
         }
+       
     }
 
     private Vector3 GroundPos(Vector3 feetPos, float rayLenght = 10)
