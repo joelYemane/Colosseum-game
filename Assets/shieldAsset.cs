@@ -16,7 +16,7 @@ public class shieldAsset : MonoBehaviour
     void Update()
     {
         Vector3 direction = (enemy.position - player.position).normalized;
-        direction.y -=  -offSet;
+  
         arm.transform.LookAt(direction);
     }
 }

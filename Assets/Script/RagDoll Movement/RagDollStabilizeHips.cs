@@ -6,19 +6,18 @@ using UnityEngine;
 public class RagDollStabilizeHips : MonoBehaviour
 {
     // Stabilizing
-    public Transform pointOfForceArmL, pointOfForceArmR,slapPointR,slapPointL;
-    public Rigidbody body,spine, head,foreArmR,foreArmL;
+    
+    public Rigidbody body,spine, head;
     public Transform desiredPosition;
     public float porportionalGain;
     public float intergralGain;
     public float devirativeGain;
     private Vector3 previousError;
     private Vector3 intergral;
-    private Vector3 forcePos;
-    public float strenght,streghtUp;
+   
+    
     public GameObject mainObject;
-    public Transform RayCastPosL;
-    public Transform RayCastPosR;
+    
     //Leg Placement
     public Rigidbody[] ragdollRigidbodies;
     public Transform leftFoot;
@@ -27,7 +26,7 @@ public class RagDollStabilizeHips : MonoBehaviour
     public Transform rightFootTargetIK;
     public float lerpSpeed = 5;
     public LayerMask ground;
-    public Transform endPosSlamR;
+
     //LegSwitch
     private enum Foot {Left,Right}
     private Foot movingFoot = Foot.Left;
@@ -38,7 +37,7 @@ public class RagDollStabilizeHips : MonoBehaviour
 
     // Distance Check Player
     public float treshHold;
-    public GameObject target;
+   
     public float distantPlayer;
     public Transform player;
     public float time;
@@ -47,7 +46,7 @@ public class RagDollStabilizeHips : MonoBehaviour
 
     void Start()
     {
-       ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
+        ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
         stepTimer = stepDuration;
     }
 
@@ -62,11 +61,7 @@ public class RagDollStabilizeHips : MonoBehaviour
     }
     void FixedUpdate()
     {
-        Vector3 TargetDelta = target.transform.position - transform.position;
-        float angle = Vector3.Angle(transform.forward, TargetDelta);
-        Vector3 turnAxis = Vector3.Cross(transform.forward, TargetDelta);
-        //transform.RotateAround(transform.position, turnAxis, Time.deltaTime * speed * angle);
-
+        
         //Look At
 
         // Stabilizing using PID formule TO make him always give a aforce back to its desired position.
@@ -76,9 +71,6 @@ public class RagDollStabilizeHips : MonoBehaviour
         previousError = currentError;
         Vector3 force = (porportionalGain * currentError) + (intergralGain * intergral) + (devirativeGain * derivative);
         body.AddForce(force);
-        // pull head up so ragdoll does not need to find balance point always
-        //head.AddForce(Vector3.up * streghtUp);
-        //spine.AddForce(Vector3.up * streghtUp);
        
         
         
@@ -95,13 +87,13 @@ public class RagDollStabilizeHips : MonoBehaviour
         }
         if(movingFoot == Foot.Left)
         {
-            Vector3 leftFootGroundPos = GroundPos(RayCastPosL.position);
+            Vector3 leftFootGroundPos = GroundPos(leftFoot.position);
             Vector3 leftFootTarget = new Vector3(centerOfMass.x - 0.2f, leftFootGroundPos.y, centerOfMass.z);
             leftFootTargetIK.position = Vector3.Lerp(leftFootTargetIK.position, leftFootTarget, Time.deltaTime * lerpSpeed);
         }
         else
         {
-            Vector3 rightFoorGroundPos = GroundPos(RayCastPosR.position);
+            Vector3 rightFoorGroundPos = GroundPos(rightFoot.position);
             Vector3 rightFootTarget = new Vector3(centerOfMass.x + 0.2f, rightFoorGroundPos.y, centerOfMass.z);
             rightFootTargetIK.position = Vector3.Lerp(rightFootTargetIK.position, rightFootTarget, Time.deltaTime * lerpSpeed);
         }

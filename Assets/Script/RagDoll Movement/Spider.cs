@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spider : MonoBehaviour
 {
-   
+   // Pid Controller
     public Rigidbody body;
     public Transform desiredPosition;
     public float porportionalGain;
@@ -26,10 +26,11 @@ public class Spider : MonoBehaviour
        
         Vector3 currentError = desiredPosition.position - body.position;
         intergral += currentError * Time.fixedDeltaTime;
-        intergral = Vector3.ClampMagnitude(intergral,intergralClamp);
+        //intergral = Vector3.ClampMagnitude(intergral,intergralClamp);
         Vector3 derivative = (currentError - previousError) / Time.fixedDeltaTime;
         previousError = currentError;
         Vector3 force = (porportionalGain * currentError) + (intergralGain * intergral) + (devirativeGain * derivative);
         body.AddForce(force);
     }
+   
 }

@@ -10,13 +10,12 @@ public class ForceHeadPull : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        head = GetComponent<Rigidbody>();
-      
+       
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        head.AddForce(Vector3.up *speed * Time.deltaTime,ForceMode.VelocityChange);
+        head.AddForce(Vector3.up *speed * Time.fixedDeltaTime);
     }
 }
