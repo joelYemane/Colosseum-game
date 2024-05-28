@@ -13,6 +13,7 @@ public class TutoriolColl : MonoBehaviour
         if(other.gameObject.layer == 6)
         {
             _voice.PlayAudio(_audio);
+            Destroy(this);
         }
     }
 }
