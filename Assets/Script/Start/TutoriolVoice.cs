@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class TutoriolVoice : MonoBehaviour
 {
@@ -10,6 +8,8 @@ public class TutoriolVoice : MonoBehaviour
     public Animator _animator;
 
     public Voice _voice = new Voice();
+
+    public Transform _player;
 
     [Serializable]
     public class Voice
@@ -39,5 +39,10 @@ public class TutoriolVoice : MonoBehaviour
         _animator.SetBool("Talking", true);
         await Task.Delay((int)_clip.length * 1000);
         _animator.SetBool("Talking", false);
+    }
+
+    private void LateUpdate()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, 2);
     }
 }
