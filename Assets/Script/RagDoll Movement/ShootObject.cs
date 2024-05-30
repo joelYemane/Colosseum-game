@@ -8,6 +8,7 @@ public class ShootObject : MonoBehaviour
     public Transform shootPoint;
     public float ShootCooldown;
     public Rigidbody rb;
+    public float speed;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,13 +18,20 @@ public class ShootObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        StartCoroutine(ShootBalls());
+        ShootCooldown -= Time.deltaTime;
+        if(ShootCooldown <= 0)
+        {
+            StartCoroutine(ShootBalls());
+            ShootCooldown = 4;
+        }
+        
     }
     IEnumerator ShootBalls()
     {
-        rb = prefabShoot.GetComponent<Rigidbody>();
-        prefabShoot = Instantiate(prefabShoot,new Vector3(1,0,0),Quaternion.identity);
-        rb.AddForce(0,0,1 ,ForceMode.Impulse);
+      
+        GameObject cannonball = Instantiate(prefabShoot,shootPoint.position,Quaternion.identity);
+        rb = cannonball.GetComponent<Rigidbody>();
+        rb.AddForce(shootPoint.transform.forward * speed ,ForceMode.Impulse);
         yield return new WaitForSeconds(ShootCooldown);
     }
 }
