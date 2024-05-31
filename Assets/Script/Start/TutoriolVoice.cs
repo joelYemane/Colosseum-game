@@ -1,14 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class TutoriolVoice : MonoBehaviour
 {
     public AudioSource _skullAudio;
+    public Animator _animator;
 
     public Voice _voice = new Voice();
+
+    public Transform _player;
 
     [Serializable]
     public class Voice
@@ -31,9 +32,17 @@ public class TutoriolVoice : MonoBehaviour
         PlayAudio(_voice._start);
     }
 
-    public void PlayAudio(AudioClip _clip)
+    public async void PlayAudio(AudioClip _clip)
     {
         _skullAudio.clip = _clip;
         _skullAudio.Play();
+        _animator.SetBool("Talking", true);
+        await Task.Delay((int)_clip.length * 1000);
+        _animator.SetBool("Talking", false);
+    }
+
+    private void LateUpdate()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, 2);
     }
 }

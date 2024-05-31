@@ -15,7 +15,7 @@ public class EllementStoneMain : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.GetComponent<BaseWeapon>() && _holding)
+        if (collision.gameObject.GetComponent<BaseWeapon>())
         {
             collision.gameObject.GetComponent<BaseWeapon>()._upgrade = _ellement;
             collision.gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", _ellement._EmissionColor);
